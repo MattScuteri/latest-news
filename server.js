@@ -7,7 +7,7 @@ const cheerio = require('cheerio');
 const logger = require('morgan');
 const axios = require('axios');
 const mongoose = require('mongoose');
-const db = require('./models');
+// const db = require('./models');
 
 const PORT = 3000;
 
@@ -28,39 +28,43 @@ app.get('/times', function(req, res) {
 	axios.get('https://www.nytimes.com/').then(function(response) {
 		let $ = cheerio.load(response.data);
 
-		$(###).each(function(i, element) {
+		$("div first-column-region region").each(function(i, element) {
 			let timesResult = {};
 
-			//Add scrape information for NY Times here
+			timesResult.title = $(this).children('h2');
+			timesResult.summary = $(this).children('p summary');
+			timesResult.link = $(this).children('h2').attr('href');
+
+			console.log(timesResult);
 
 			//Add new Article object to article model
 		});
 	});
 });
 
-app.get('/post', function(req, res) {
-	axios.get('https://www.washingtonpost.com/').then(function(response) {
-		let $ = cheerio.load(response.data);
+// app.get('/post', function(req, res) {
+// 	axios.get('https://www.washingtonpost.com/').then(function(response) {
+// 		let $ = cheerio.load(response.data);
 
-		$(###).each(function(i, element) {
-			let postResult = {};
+// 		$(###).each(function(i, element) {
+// 			let postResult = {};
 
-			//Add scrape information for Post
+// 			//Add scrape information for Post
 
-			//Add new Article object to article model
-		})
-	})
-})
+// 			//Add new Article object to article model
+// 		})
+// 	})
+// })
 
-app.get('/reddit', function(req, res) {
-	axios.get('https://www.reddit.com/r/news/').then(function(res, req) {
-		let $ = cheerio.load(response.data);
+// app.get('/reddit', function(req, res) {
+// 	axios.get('https://www.reddit.com/r/news/').then(function(res, req) {
+// 		let $ = cheerio.load(response.data);
 
-		$(###).each(function(i, element) {
-			let redditResult = {};
-		});
-	});
-});
+// 		$(###).each(function(i, element) {
+// 			let redditResult = {};
+// 		});
+// 	});
+// });
 
 app.listen(PORT, function() {
 	console.log('App running on port ' + PORT);
