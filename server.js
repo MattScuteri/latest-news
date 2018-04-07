@@ -7,7 +7,7 @@ const cheerio = require('cheerio');
 const logger = require('morgan');
 const axios = require('axios');
 const mongoose = require('mongoose');
-// const db = require('./models');
+const db = require('./models');
 
 const PORT = 3000;
 
@@ -24,6 +24,10 @@ app.set('view engine', 'handlebars');
 
 mongoose.connect('mongodb://localhost/latestNews');
 
+app.get('/', function(req, res) {
+	res.render("layouts/main");
+})
+
 app.get('/times', function(req, res) {
 	axios.get('https://www.nytimes.com/').then(function(response) {
 		let $ = cheerio.load(response.data);
@@ -37,7 +41,11 @@ app.get('/times', function(req, res) {
 
 			console.log(timesResult);
 
-			//Add new Article object to article model
+			db.Article.create(result).then(function(dbArticle) {
+				console.log(dbArticle);
+			}).catch(function(err) {
+				return res.json(err);
+			});
 		});
 	});
 });
