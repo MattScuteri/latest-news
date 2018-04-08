@@ -50,29 +50,44 @@ app.get('/times', function(req, res) {
 	});
 });
 
-// app.get('/post', function(req, res) {
-// 	axios.get('https://www.washingtonpost.com/').then(function(response) {
-// 		let $ = cheerio.load(response.data);
+app.get('/post', function(req, res) {
+	axios.get('https://www.washingtonpost.com/').then(function(response) {
+		let $ = cheerio.load(response.data);
 
-// 		$(###).each(function(i, element) {
-// 			let postResult = {};
+		$("border-bottom-hairline").each(function(i, element) {
+			let postResult = {};
 
-// 			//Add scrape information for Post
+			postResult.title = $(this).children('div headline');
+			postResult.summary = $(this).children('div blurb');
+			postResult.link = $(this).children('div headline').attr('href');
 
-// 			//Add new Article object to article model
-// 		})
-// 	})
-// })
+			db.Article.create(result).then(function(dbArticle) {
+				console.log(dbArticle);
+			}).catch(function(err) {
+				return res.json(err);
+			});
+		});
+	});
+});
 
-// app.get('/reddit', function(req, res) {
-// 	axios.get('https://www.reddit.com/r/news/').then(function(res, req) {
-// 		let $ = cheerio.load(response.data);
+app.get('/reddit', function(req, res) {
+	axios.get('https://www.reddit.com/r/news/').then(function(res, req) {
+		let $ = cheerio.load(response.data);
 
-// 		$(###).each(function(i, element) {
-// 			let redditResult = {};
-// 		});
-// 	});
-// });
+		$('p.title').each(function(i, element) {
+			let redditResult = {};
+		
+			redditResult.title = $(this).text();
+			redditResult.link = $(this).children().attr('href');
+
+			db.Article.create(result).then(function(dbArticle) {
+				console.log(dbArticle);
+			}).catch(function(err) {
+				return res.json(err);
+			});
+		});
+	});
+});
 
 app.listen(PORT, function() {
 	console.log('App running on port ' + PORT);
